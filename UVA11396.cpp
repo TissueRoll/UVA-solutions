@@ -16,17 +16,18 @@ vector<int> adj[N];
 int vis[N];
 bool answer;
 
-bool color(int u, int p) {
-	queue<pii> q; q.push({u,-1});
+bool color(int a, int p) {
+	queue<pii> q; q.push(pii(a,-1));
 	while (not q.empty()) {
 		pii u = q.front(); q.pop();
 		if (u.second == -1) vis[u.first] = 1;
 		else vis[u.first] = (vis[u.second] == 1 ? 2 : 1);
 		debug_text("Current node: %d color %d\n", u.first, vis[u.first]);
 		for (int v : adj[u.first]) {
+            if (v == u.second) continue;
 			if (vis[v] == vis[u.first]) return false;
 			else if (vis[v] > 0) continue;
-			else q.push({v,u.first});
+			else q.push(pii(v,u.first));
 		}
 	}
 	return true;
@@ -35,8 +36,6 @@ bool color(int u, int p) {
 int main () {
 	while (cin >> n) {
 		if (n == 0) break;
-		answer = 1;
-		// answer &= (n%4 == 0);
 		memset(vis, 0, sizeof vis);
 		int u, v;
 		while (cin >> u >> v) {
@@ -45,13 +44,11 @@ int main () {
 			adj[v].push_back(u);
 		}
 		
-		for (int i = 0; i < n; i++)
-			if (vis[i] == 0) answer &= color(i,-1);
-		
+        answer = color(1,-1);
 
 		cout << (answer ? "YES" : "NO") << endl;
 
-		for (int i = 0; i < n; i++) adj[i].clear();
+		for (int i = 0; i <= n; i++) adj[i].clear();
 	}
 	return 0;
 }
